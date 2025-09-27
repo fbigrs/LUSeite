@@ -1,371 +1,594 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Euter & Söhne - Ihr Lohnunternehmen</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Euter & Söhne – Lohnunternehmen im Landwirtschafts‑Simulator 25</title>
+    <meta name="description" content="Euter & Söhne – Ihr verlässliches virtuelles Lohnunternehmen im LS25. Transparente Preise, 24/7 erreichbar, regionale Einsätze, moderne Technik.">
+    <meta name="theme-color" content="#0b0f14">
+    <meta property="og:title" content="Euter & Söhne – Lohnunternehmen LS25">
+    <meta property="og:description" content="Transparente Preise, 24/7 erreichbar, regionale Einsätze. Jetzt Preisliste öffnen.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50%' x='50%' dominant-baseline='middle' text-anchor='middle' font-size='48'>🐄</text></svg>">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg: #0b0f14;
+            --bg-elev: #121820;
+            --text: #e6edf3;
+            --muted: #9fb0c0;
+            --accent: #38b26b;
+            --accent-2: #2a8f56;
+            --ring: #49d07e;
+            --radius: 14px;
+            --shadow: 0 10px 30px rgba(0,0,0,.35);
+            --maxw: 1200px;
+            --gap: 20px;
+            --transition: 200ms ease;
         }
-        
+
+        @media (prefers-reduced-motion: reduce) {
+            :root { --transition: 0ms; }
+            * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+        }
+
+        html { color-scheme: dark; }
+        html, body { height: 100%; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background: radial-gradient(1200px 800px at 20% -10%, #12182066, transparent 70%),
+                        radial-gradient(1000px 600px at 120% 10%, #0f141b66, transparent 60%),
+                        var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+
+        .container { max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        img, svg { max-width: 100%; height: auto; }
+
+        /* Accessibility focus */
+        :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 8px; }
+
+        /* Header / Nav */
+        .nav {
+            position: sticky; top: 0; z-index: 50;
+            backdrop-filter: blur(6px);
+            background: color-mix(in srgb, var(--bg-elev) 70%, transparent);
+            border-bottom: 1px solid rgba(255,255,255,.06);
         }
-        
-        header {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 0 0 20px 20px;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .main-content {
-            background: white;
-            margin: 2rem 0;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        
-        .service-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .service-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .service-card .price {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 0.5rem;
-        }
-        
-        .order-form {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-            border: 2px solid #4CAF50;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-        
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .2px; }
+        .brand__logo { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(135deg, #0f1a13, #12241a); box-shadow: inset 0 0 0 1px rgba(56,178,107,.35); }
+        .brand__name { font-size: 16px; }
+        .nav__list { display: flex; flex-wrap: wrap; gap: 6px; }
+        .nav__link { display: inline-block; padding: 8px 10px; border-radius: 10px; color: var(--text); }
+        .nav__link[aria-current="true"] { background: rgba(56,178,107,.12); color: var(--text); box-shadow: inset 0 0 0 1px rgba(56,178,107,.35); }
+        .nav__cta { display: flex; gap: 8px; }
         .btn {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0.5rem;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 14px; border-radius: var(--radius); cursor: pointer; border: 0;
+            color: #07110c; background: linear-gradient(180deg, var(--accent), var(--accent-2));
+            box-shadow: 0 6px 18px rgba(56,178,107,.35);
+            transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
         }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #FF6B6B 0%, #ee5a52 100%);
-        }
-        
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196F3;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 5px;
-        }
-        
-        .testimonial {
-            background: #fff3e0;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            font-style: italic;
-        }
-        
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        
-        .contact-card {
-            background: #f5f5f5;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
+        .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(56,178,107,.45); }
+        .btn:active { transform: translateY(0); }
+        .btn--ghost { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+
+        header.hero { padding: 40px 0 24px; background: linear-gradient(180deg, transparent, rgba(255,255,255,.02)); }
+        .hero__inner { display: grid; gap: 18px; grid-template-columns: 1fr; align-items: center; }
+        .hero__title { font-size: clamp(28px, 5vw, 44px); line-height: 1.1; letter-spacing: .2px; }
+        .hero__subtitle { color: var(--muted); font-size: clamp(16px, 2.6vw, 20px); }
+        .hero__badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); font-size: 14px; color: var(--text); }
+
+        .section { padding: 48px 0; }
+        .section__head { margin-bottom: 18px; }
+        .section__title { font-size: clamp(22px, 4vw, 30px); margin: 0 0 6px; }
+        .section__lead { color: var(--muted); max-width: 70ch; }
+
+        /* Cards & grids */
+        .grid { display: grid; gap: 16px; }
+        @media (min-width: 640px) { .grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .grid--3-lg { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .card { background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 86%, transparent), var(--bg-elev)); border: 1px solid rgba(255,255,255,.06); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+        .card h3 { margin: 0 0 6px; font-size: 18px; }
+        .card p { margin: 0; color: var(--muted); }
+        .card__price { margin-top: 8px; font-weight: 700; color: var(--text); }
+        .card__actions { margin-top: 12px; display: flex; gap: 8px; }
+
+        /* List with icons */
+        .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+        .list__item { display: flex; gap: 10px; align-items: flex-start; }
+
+        /* Footer */
+        footer { border-top: 1px solid rgba(255,255,255,.08); padding: 24px 0 60px; color: var(--muted); }
+
+        /* Modal */
+        .modal__backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal__backdrop[aria-hidden="false"] { display: flex; }
+        .modal { background: var(--bg-elev); color: var(--text); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); width: min(100%, 1080px); max-height: 90vh; display: grid; grid-template-rows: auto 1fr auto; box-shadow: var(--shadow); }
+        .modal__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .modal__body { padding: 12px 16px; overflow: auto; }
+        .modal__foot { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .modal__title { font-size: 18px; margin: 0; }
+
+        /* Table */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { text-align: left; padding: 10px; border-bottom: 1px solid rgba(255,255,255,.08); vertical-align: top; }
+        .table th { position: sticky; top: 0; background: var(--bg-elev); z-index: 1; }
+        .th-sort { cursor: pointer; user-select: none; }
+        .th-sort .arrow { margin-left: 8px; opacity: .7; }
+
+        /* Inputs */
+        .field { display: grid; gap: 6px; }
+        .input, .select, .textarea { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: #0e131a; color: var(--text); box-shadow: inset 0 0 0 1px transparent; transition: box-shadow var(--transition), border-color var(--transition); }
+        .input::placeholder, .textarea::placeholder { color: #7f8b97; }
+        .input:focus, .select:focus, .textarea:focus { border-color: rgba(73,208,126,.7); box-shadow: 0 0 0 3px rgba(73,208,126,.18); outline: none; }
+
+        /* Utilities */
+        .muted { color: var(--muted); }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .spacer { height: 16px; }
+
+        /* Back to top */
+        .to-top { position: fixed; right: 16px; bottom: 16px; z-index: 40; display: none; }
+        .to-top[aria-hidden="false"] { display: inline-flex; }
+
+        /* Print */
+        @media print {
+            body { background: white; color: #111; }
+            .nav, .to-top, .btn-print-hide { display: none !important; }
+            .card, .modal { box-shadow: none; }
+            a { color: #000; text-decoration: underline; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>🐄 Euter & Söhne 🐄</h1>
-            <p>Ihr verlässlicher Partner für Lohnarbeiten</p>
-            <p><em>"Wo Milch & Tradition auf moderne Technik treffen"</em></p>
+    <nav class="nav" aria-label="Hauptnavigation">
+        <div class="container nav__inner">
+            <a href="#top" class="brand" aria-label="Startseite">
+                <span class="brand__logo" aria-hidden="true">🐄</span>
+                <span class="brand__name">Euter &amp; Söhne</span>
+            </a>
+            <div class="nav__list" role="menubar">
+                <a class="nav__link" role="menuitem" href="#ueber-uns">Über uns</a>
+                <a class="nav__link" role="menuitem" href="#konzept">Konzept</a>
+                <a class="nav__link" role="menuitem" href="#leistungen">Leistungen</a>
+                <a class="nav__link" role="menuitem" href="#warum-wir">Warum wir</a>
+                <a class="nav__link" role="menuitem" href="#versprechen">Unsere Versprechen</a>
+                <a class="nav__link" role="menuitem" href="#kontakt">Kontakt</a>
+                <a class="nav__link" role="menuitem" href="#preise">Preise</a>
+            </div>
+            <div class="nav__cta">
+                <button class="btn" data-open-pricelist aria-haspopup="dialog" aria-controls="preisliste-modal">Preisliste öffnen</button>
+            </div>
+        </div>
+    </nav>
+
+    <header id="ueber-uns" class="hero">
+        <div class="container hero__inner">
+            <div>
+                <h1 class="hero__title">Euter &amp; Söhne – Ihr verlässlicher Partner für Lohnarbeiten</h1>
+                <p class="hero__subtitle"><em>„Wo Milch &amp; Tradition auf moderne Technik treffen“</em></p>
+                <div class="hero__badges" aria-label="Vertrauenskennzahlen">
+                    <span class="badge">24/7 erreichbar</span>
+                    <span class="badge">Transparente Preise</span>
+                </div>
+                <div class="row" style="margin-top:10px">
+                    <button class="btn" data-open-pricelist aria-haspopup="dialog" aria-controls="preisliste-modal">Preisliste öffnen</button>
+                    <a href="#kontakt" class="btn btn--ghost">Kontakt</a>
+                </div>
+            </div>
         </div>
     </header>
 
-    <div class="container">
-        <div class="main-content">
-            <h2>🌟 Unser Konzept: Lohndienstleistungen zum Freundschaftspreis</h2>
-            
-            <div class="info-box">
-                <strong>💡 Unsere Philosophie:</strong> Als Milchviehbetrieb kennen wir die Herausforderungen kleiner und mittlerer Höfe. Deshalb bieten wir Lohnarbeiten zu Preisen an, die sich wirklich lohnen - für beide Seiten!
-            </div>
-
-            <h3>🚜 Unsere Leistungen</h3>
-            <div class="services-grid">
-                <div class="service-card">
-                    <h3>🌾 Dresch & Erntearbeiten</h3>
-                    <p>Gras Silage, Mais Silage, Getreide - wir ernten mit modernem Equipment</p>
-                    <div class="price">ab 2.000 €/ha</div>
+    <main>
+        <section id="konzept" class="section">
+            <div class="container">
+                <div class="section__head">
+                    <h2 class="section__title">Konzept</h2>
+                    <p class="section__lead">Als Milchviehbetrieb kennen wir die Herausforderungen kleiner und mittlerer Höfe. Unser Ansatz verbindet faire, transparente Konditionen mit zuverlässiger Ausführung – von der Ernte bis zur Fütterung.</p>
                 </div>
-                
-                <div class="service-card">
-                    <h3>🥕 Bodenbearbeitung</h3>
-                    <p>Pflügen, Grubbern, Säen - alles aus einer Hand</p>
-                    <div class="price">ab 1.500 €/ha</div>
-                </div>
-                
-                <div class="service-card">
-                    <h3>🧪 TMR-Mischung</h3>
-                    <p>Individuelle Rationen für Ihre Milchkühe</p>
-                    <div class="price">375 €/Tonne</div>
-                </div>
-                
-                <div class="service-card">
-                    <h3>🚛 Transportdienste</h3>
-                    <p>Produkte, Maschinen, Material - wir bringen's</p>
-                    <div class="price">25,00 €/km</div>
-                </div>
-
-                <div class="service-card">
-                    <h3>🍼 Molkereiprodukte</h3>
-                    <p>Käse, Milch, Schokolade, Butter - wir produzieren alles selbst</p>
-                    <div class="price">preis auf Anfrage</div>
-                </div><br>
-
-            <h3>🚜 Unsere Molkerei</h3>
-                
-                <div class="service-card">
-                    <h3>🍼 Molkereiprodukte</h3>
-                    <p>Käse, Milch, Schokolade, Butter - wir produzieren alles selbst</p>
-                    <div class="price">preis auf Anfrage</div>
+                <div class="grid grid--2">
+                    <div class="card">
+                        <h3>Kurz & bündig</h3>
+                        <ul class="list">
+                            <li class="list__item"><span aria-hidden="true">✅</span><span>Freundschaftliche, faire Preisgestaltung</span></li>
+                            <li class="list__item"><span aria-hidden="true">✅</span><span>Regionale Einsätze, kurze Wege</span></li>
+                            <li class="list__item"><span aria-hidden="true">✅</span><span>Moderne Technik, saubere Arbeit</span></li>
+                            <li class="list__item"><span aria-hidden="true">✅</span><span>Flexible Terminabsprachen – auch kurzfristig</span></li>
+                        </ul>
+                    </div>
+                    <aside class="card" aria-label="Unsere Philosophie">
+                        <h3>Unsere Philosophie</h3>
+                        <p>Wir arbeiten auf Augenhöhe. Verlässlichkeit und Transparenz sind Kern unseres Handelns. So entstehen dauerhafte Partnerschaften – mit Ergebnissen, die sich für alle lohnen.</p>
+                    </aside>
                 </div>
             </div>
+        </section>
 
-            <h3>🏆 Warum Euter & Söhne?</h3>
-            <div class="testimonial">
-                <p>"Als Milchviehbetrieb wissen wir genau, was wichtig ist: Pünktlichkeit, Sauberkeit und faire Preise. Unsere Molkerei garantiert beste Qualität - und das spürt man in jedem Liter Milch!"</p>
-                <strong>- Klaus Euter, Senior-Chef</strong>
+        <section id="leistungen" class="section">
+            <div class="container">
+                <div class="section__head">
+                    <h2 class="section__title">Leistungen</h2>
+                    <p class="section__lead">Vom Dreschen bis zur TMR-Mischung – wir decken sämtliche Schritte rund um Ernte, Transport und Fütterung ab.</p>
+                </div>
+                <div class="grid grid--3 grid--3-lg">
+                    <div class="card">
+                        <h3>🌾 Dreschen</h3>
+                        <p>Getreideernte mit effizientem Workflow und sauberer Ablage.</p>
+                        <div class="card__price">2.000 €/ha</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                    <div class="card">
+                        <h3>🜂 Pflügen</h3>
+                        <p>Gründliche Bodenlockerung für optimale Folgekulturen.</p>
+                        <div class="card__price">2.000 €/ha</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                    <div class="card">
+                        <h3>🌱 Säen</h3>
+                        <p>Präzise Aussaat für gleichmäßige Bestände.</p>
+                        <div class="card__price">1.500 €/ha</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                    <div class="card">
+                        <h3>🧪 Spritzen</h3>
+                        <p>Herbizid oder Flüssigdünger – sauber und zielgenau.</p>
+                        <div class="card__price">500 €/ha</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                    <div class="card">
+                        <h3>🚜 Mähen</h3>
+                        <p>Schonender Schnitt für bestes Futter.</p>
+                        <div class="card__price">1.000 €/ha</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                    <div class="card">
+                        <h3>🚚 Transport</h3>
+                        <p>Erntegut, Ballen, Paletten u.v.m. – sicher ans Ziel.</p>
+                        <div class="card__price">250 € pro Anhänger / 10 € pro km</div>
+                        <div class="card__actions"><a href="#preise" class="btn btn--ghost" data-open-pricelist>Details</a></div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="info-box">
-                <strong>✅ Unsere Versprechen:</strong>
-                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-                    <li>Keine versteckten Kosten - transparente Preisgestaltung</li>
-                    <li>Flexible Terminvereinbarung (auch kurzfristig möglich)</li>
-                    <li>Regionale Preise nach realem Niveau</li>
-                    <li>Regionaler Einsatz (keine riesigen Fahrten)</li>
-                    <li>Persönliche Betreuung durch die Euter-Familie</li>
+        <section id="warum-wir" class="section">
+            <div class="container">
+                <div class="section__head">
+                    <h2 class="section__title">Warum wir</h2>
+                </div>
+                <div class="grid grid--3">
+                    <div class="card"><h3>Zuverlässig</h3><p>Termine einhalten, sauber abliefern – darauf können Sie zählen.</p></div>
+                    <div class="card"><h3>Faire Preise</h3><p>Klar kommuniziert, ohne Kleingedrucktes – Sie wissen vorher, wo Sie stehen.</p></div>
+                    <div class="card"><h3>Regionale Einsätze</h3><p>Kurze Wege, schnelle Abstimmung, vertraute Felder.</p></div>
+                    <div class="card"><h3>Moderne Technik</h3><p>Effizienz und Qualität durch gepflegten Maschinenpark.</p></div>
+                    <div class="card"><h3>Persönlich</h3><p>Direkter Draht zur Euter‑Familie – unbürokratisch und nahbar.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="versprechen" class="section">
+            <div class="container">
+                <div class="section__head">
+                    <h2 class="section__title">Unsere Versprechen</h2>
+                </div>
+                <ul class="list">
+                    <li class="list__item"><span aria-hidden="true">✔️</span><span>Keine versteckten Kosten</span></li>
+                    <li class="list__item"><span aria-hidden="true">✔️</span><span>Flexible Terminvereinbarung</span></li>
+                    <li class="list__item"><span aria-hidden="true">✔️</span><span>Regionale Preise</span></li>
+                    <li class="list__item"><span aria-hidden="true">✔️</span><span>Regionaler Einsatz</span></li>
+                    <li class="list__item"><span aria-hidden="true">✔️</span><span>Persönliche Betreuung</span></li>
                 </ul>
             </div>
+        </section>
 
-            <h3>📞 Kontaktieren sie uns!</h3>
+        <section id="kontakt" class="section" aria-labelledby="kontakt-title">
+            <div class="container">
+                <div class="section__head">
+                    <h2 id="kontakt-title" class="section__title">Kontaktieren Sie uns</h2>
+                    <p class="section__lead">Schnell erreichbar – wir melden uns zeitnah zurück.</p>
+                </div>
+                <div class="grid grid--3">
+                    <div class="card" aria-label="Standort">
+                        <h3>📍 Standort</h3>
+                        <p>FS25 Server<br>Milchviehhof „Euter &amp; Söhne“<br>Koordinaten: 125, 87</p>
+                    </div>
+                    <div class="card" aria-label="Erreichbarkeit">
+                        <h3>⏰ Erreichbarkeit</h3>
+                        <p>Rund um die Uhr<br>Discord: Kontakt auf Anfrage</p>
+                    </div>
+                    <div class="card" aria-label="Zahlung">
+                        <h3>💰 Zahlung</h3>
+                        <p>Bar vor Ort<br>Überweisung möglich</p>
+                    </div>
+                </div>
+                <div class="spacer"></div>
+                <form class="card" aria-label="Kontaktformular" onsubmit="event.preventDefault();" novalidate>
+                    <div class="grid grid--2">
+                        <label class="field"><span>Name</span><input class="input" name="name" autocomplete="name" required placeholder="Ihr Name"></label>
+                        <label class="field"><span>Kontakt (E‑Mail oder Discord)</span><input class="input" name="contact" autocomplete="email" placeholder="name@example.com"></label>
+                    </div>
+                    <div class="spacer"></div>
+                    <label class="field"><span>Anliegen</span><textarea class="textarea" name="message" rows="4" placeholder="Kurze Beschreibung Ihres Anliegens"></textarea></label>
+                    <div class="row" style="margin-top:12px">
+                        <button class="btn btn-print-hide" onclick="window.print()" type="button">Seite drucken</button>
+                        <button class="btn" data-open-pricelist type="button" aria-haspopup="dialog" aria-controls="preisliste-modal">Preisliste öffnen</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
 
-            <div class="contact-info">
-                <div class="contact-card">
-                    <h4>📍 Standort</h4>
-                    <p>FS25 Server<br>
-                    Milchviehhof "Euter & Söhne"<br>
-                    Koordinaten: 125, 87</p>
+    <footer class="section" id="preise">
+        <div class="container">
+            <div class="row" style="justify-content: space-between">
+                <span>© <span id="year"></span> Euter &amp; Söhne</span>
+                <span class="muted"><a href="#" class="muted">Impressum</a> · <a href="#" class="muted">Disclaimer</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal: Preisliste -->
+    <div class="modal__backdrop" id="preisliste-backdrop" aria-hidden="true"></div>
+    <div class="modal__backdrop" id="preisliste-modal" role="dialog" aria-modal="true" aria-labelledby="preisliste-title" aria-hidden="true">
+        <div class="modal" tabindex="-1">
+            <header class="modal__head">
+                <h3 id="preisliste-title" class="modal__title">Preisliste</h3>
+                <button class="btn btn--ghost" data-close-pricelist aria-label="Schließen (Esc)">Schließen</button>
+            </header>
+            <div class="modal__body">
+                <div class="grid grid--2">
+                    <label class="field"><span>Suche</span><input id="search" class="input" placeholder="Leistung, Einheit, …" autocomplete="off"></label>
+                    <label class="field"><span>Kategorie</span>
+                        <select id="category" class="select">
+                            <option value="">Alle</option>
+                        </select>
+                    </label>
                 </div>
-                
-                <div class="contact-card">
-                    <h4>⏰ Erreichbarkeit</h4>
-                    <p>Daily: Rund um die Uhr<br>
-                    Discord: Euter und Söhne Bereich</p>
-                </div>
-                
-                <div class="contact-card">
-                    <h4>💰 Zahlung</h4>
-                    <p>Barzahlung vor Ort<br>
-                    Überweisung möglich<br>
-                    Freundschaftspreise</p>
+                <div class="spacer"></div>
+                <div style="overflow:auto; border:1px solid rgba(255,255,255,.08); border-radius: var(--radius);">
+                    <table class="table" aria-describedby="table-count">
+                        <thead>
+                            <tr>
+                                <th class="th-sort" data-sort="titel" scope="col">Leistung <span class="arrow" aria-hidden="true">↕</span></th>
+                                <th class="th-sort" data-sort="preis" scope="col">Preis <span class="arrow" aria-hidden="true">↕</span></th>
+                                <th class="th-sort" data-sort="einheit" scope="col">Einheit <span class="arrow" aria-hidden="true">↕</span></th>
+                                <th class="th-sort" data-sort="kategorie" scope="col">Kategorie <span class="arrow" aria-hidden="true">↕</span></th>
+                                <th scope="col">Bemerkung</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
                 </div>
             </div>
+            <footer class="modal__foot">
+                <span id="table-count" class="muted">0 Einträge</span>
+                <div class="row">
+                    <button class="btn btn--ghost" id="export-csv" type="button">CSV exportieren</button>
+                    <button class="btn" data-close-pricelist type="button">Schließen</button>
+                </div>
+            </footer>
         </div>
     </div>
 
+    <button class="btn to-top" id="to-top" aria-hidden="true" aria-label="Zurück nach oben">↑</button>
+
     <script>
-        // Formular-Handling
-        document.getElementById('orderForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const orderData = {};
-            
-            for (let [key, value] of formData.entries()) {
-                orderData[key] = value;
-            }
-            
-            // Hier könntest du die Daten an einen Server senden
-            alert(`✅ Vielen Dank für Ihren Auftrag!\n\nWir werden uns schnellstmöglich bei Ihnen melden.\n\nAuftragsdaten:\nBetrieb: ${orderData.name}\nLeistung: ${orderData.service}\nFläche: ${orderData.area} ha\nTermin: ${orderData.date}`);
-            
-            // Optional: Formular zurücksetzen
-            // this.reset();
-        });
+    // Base runtime
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const state = { sortKey: 'titel', sortDir: 'asc', search: '', category: '', lastFocus: null };
 
-        // PDF-Generierung
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Formulardaten abrufen
-            const formData = new FormData(document.getElementById('orderForm'));
-            const orderData = {};
-            for (let [key, value] of formData.entries()) {
-                orderData[key] = value;
-            }
-            
-            // PDF-Inhalt
-            doc.setFontSize(20);
-            doc.text('Euter & Söhne - Lohnunternehmen', 20, 30);
-            
-            doc.setFontSize(16);
-            doc.text('Auftragsbestätigung', 20, 45);
-            
-            doc.setFontSize(12);
-            let yPosition = 60;
-            
-            doc.text(`Betrieb: ${orderData.name || 'nicht angegeben'}`, 20, yPosition);
-            yPosition += 15;
-            doc.text(`Kontakt: ${orderData.contact || 'nicht angegeben'}`, 20, yPosition);
-            yPosition += 15;
-            doc.text(`Leistung: ${orderData.service || 'nicht angegeben'}`, 20, yPosition);
-            yPosition += 15;
-            doc.text(`Fläche/Menge: ${orderData.area || 'nicht angegeben'}`, 20, yPosition);
-            yPosition += 15;
-            doc.text(`Termin: ${orderData.date || 'nicht angegeben'}`, 20, yPosition);
-            yPosition += 15;
-            doc.text(`Hinweise: ${orderData.notes || 'keine'}`, 20, yPosition);
-            
-            yPosition += 30;
-            doc.text('Preis wird nach Prüfung vor Ort festgelegt.', 20, yPosition);
-            yPosition += 15;
-            doc.text('Bei Fragen: Discord - EuterSohn#1234', 20, yPosition);
-            
-            // PDF speichern
-            doc.save(`Auftrag_Euter_Soehne_${orderData.name || 'unbekannt'}.pdf`);
-            
-            alert('📄 PDF wurde erfolgreich generiert und heruntergeladen!');
-        }
+    // Services data (aktuelle Liste)
+    const services = [
+        // Ackerbau / Bodenbearbeitung & Aussaat
+        { id: 'grubbern', titel: 'Grubbern', einheit: 'ha', preis: 1500, bemerkung: '', kategorie: 'Ackerbau' },
+        { id: 'pfluegen', titel: 'Pflügen', einheit: 'ha', preis: 2000, bemerkung: '', kategorie: 'Ackerbau' },
+        { id: 'saeen', titel: 'Säen', einheit: 'ha', preis: 1500, bemerkung: '', kategorie: 'Ackerbau' },
 
-        // Service-Preise aktualisieren bei Auswahl
-        document.getElementById('service').addEventListener('change', function() {
-            const service = this.value;
-            const areaInput = document.getElementById('area');
-            
-            // Optional: Platzhalter für Fläche anpassen
-            switch(service) {
-                case 'tmr':
-                    areaInput.placeholder = 'Tonnen';
-                    break;
-                case 'transport':
-                    areaInput.placeholder = 'km';
-                    break;
-                default:
-                    areaInput.placeholder = 'Hektar';
-            }
+        // Ernte
+        { id: 'ernten-ha', titel: 'Ernten (pro Hektar)', einheit: 'ha', preis: 2000, bemerkung: '', kategorie: 'Ernte' },
+        { id: 'ernten-std', titel: 'Ernten (pro Stunde, Gemüse/Wurzelfrüchte)', einheit: 'Stunde', preis: 5000, bemerkung: 'Abrechnung in 30-Minuten-Schritten', kategorie: 'Ernte' },
+        { id: 'dreschen', titel: 'Dreschen', einheit: 'ha', preis: 2000, bemerkung: '', kategorie: 'Ernte' },
+
+        // Pflanzenschutz / Düngung / Kalk
+        { id: 'spritzen', titel: 'Spritzen (Herbizid oder Flüssigdünger)', einheit: 'ha', preis: 500, bemerkung: '', kategorie: 'Pflanzenschutz' },
+        { id: 'kalken-ohne', titel: 'Kalken (Kalk wird selbst beigesteuert)', einheit: 'ha', preis: 500, bemerkung: '', kategorie: 'Bodenpflege' },
+        { id: 'kalken-mit', titel: 'Kalken (Kalk wird von uns beigesteuert)', einheit: 'ha', preis: 1500, bemerkung: '', kategorie: 'Bodenpflege' },
+        { id: 'mulchen', titel: 'Mulchen', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Bodenpflege' },
+        { id: 'walzen', titel: 'Walzen', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Bodenpflege' },
+        { id: 'guelle-ausbringen', titel: 'Gülle ausbringen (Gülle muss selbst gestellt werden)', einheit: 'ha', preis: 500, bemerkung: '', kategorie: 'Düngung' },
+
+        // Grünlandarbeiten
+        { id: 'schwadern', titel: 'Schwadern', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Grünland' },
+        { id: 'wenden', titel: 'Wenden', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Grünland' },
+        { id: 'maehen', titel: 'Mähen', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Grünland' },
+
+        // Ballen & Erntegut-Handling
+        { id: 'ballen-pressen', titel: 'Ballen pressen', einheit: 'ha', preis: 1000, bemerkung: '', kategorie: 'Ernte' },
+        { id: 'ballen-wickeln', titel: 'Ballen wickeln', einheit: 'ha', preis: 750, bemerkung: '', kategorie: 'Ernte' },
+        { id: 'stroh-bergen', titel: 'Stroh bergen (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Ernte' },
+
+        // Transport
+        { id: 'transport-guelle', titel: 'Gülletransport (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Transport' },
+        { id: 'transport-ballen', titel: 'Ballentransport (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Transport' },
+        { id: 'transport-ballen-sammeln', titel: 'Ballen sammeln (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Transport' },
+        { id: 'transport-paletten', titel: 'Paletten Transport (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Transport' },
+        { id: 'transport-futter-tier', titel: 'Futter/Tiertransport (pro Anhänger)', einheit: 'Anhänger', preis: 250, bemerkung: '+ 10 €/km', kategorie: 'Transport' },
+    ];
+
+    // Populate category filter
+    function initCategories() {
+        const cats = Array.from(new Set(services.map(s => s.kategorie))).sort((a,b)=>a.localeCompare(b,'de')); 
+        const sel = $('#category');
+        cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+    }
+
+    // Natural compare for strings/numbers
+    function cmp(a, b) {
+        if (typeof a === 'number' && typeof b === 'number') return a - b;
+        return String(a).localeCompare(String(b), 'de', { numeric: true, sensitivity: 'base' });
+    }
+
+    function formatPrice(num) {
+        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(num);
+    }
+
+    // Rendering
+    function renderTable() {
+        const rows = services
+            .filter(s => state.category ? s.kategorie === state.category : true)
+            .filter(s => state.search ? Object.values({titel:s.titel, einheit:s.einheit, kategorie:s.kategorie, bemerkung:s.bemerkung}).some(v => String(v).toLowerCase().includes(state.search)) : true)
+            .sort((a,b) => {
+                const dir = state.sortDir === 'asc' ? 1 : -1;
+                return dir * cmp(a[state.sortKey], b[state.sortKey]);
+            });
+        const tbody = $('#table-body');
+        tbody.innerHTML = rows.map(r => `
+            <tr>
+                <td>${r.titel}</td>
+                <td>${formatPrice(r.preis)}</td>
+                <td>${r.einheit}</td>
+                <td>${r.kategorie}</td>
+                <td>${r.bemerkung || ''}</td>
+            </tr>
+        `).join('');
+        $('#table-count').textContent = `${rows.length} Einträge`;
+    }
+
+    // Debounce
+    function debounce(fn, ms=150) {
+        let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    }
+
+    // Modal a11y
+    const modal = $('#preisliste-modal');
+    const backdrop = $('#preisliste-backdrop');
+    function openModal() {
+        state.lastFocus = document.activeElement;
+        modal.setAttribute('aria-hidden', 'false');
+        backdrop.setAttribute('aria-hidden', 'false');
+        // Focus first control
+        setTimeout(() => $('#search').focus(), 0);
+        trapFocus(modal);
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        releaseFocus();
+        if (state.lastFocus) state.lastFocus.focus();
+    }
+
+    // Focus trap
+    let focusTrapHandler = null;
+    function trapFocus(root) {
+        releaseFocus();
+        focusTrapHandler = (e) => {
+            if (e.key !== 'Tab') return;
+            const focusables = $$('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', root).filter(el => !el.hasAttribute('disabled'));
+            if (focusables.length === 0) return;
+            const first = focusables[0];
+            const last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        };
+        root.addEventListener('keydown', focusTrapHandler);
+        document.addEventListener('keydown', escHandler);
+    }
+    function releaseFocus() {
+        if (focusTrapHandler) modal.removeEventListener('keydown', focusTrapHandler);
+        document.removeEventListener('keydown', escHandler);
+        focusTrapHandler = null;
+    }
+    function escHandler(e) { if (e.key === 'Escape') closeModal(); }
+
+    // Sorting
+    function toggleSort(key) {
+        if (state.sortKey === key) state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        else { state.sortKey = key; state.sortDir = 'asc'; }
+        renderTable();
+    }
+
+    // CSV export (semicolon, BOM)
+    function exportCSV() {
+        const header = ['Leistung','Preis','Einheit','Kategorie','Bemerkung'];
+        const rows = $$('#table-body tr').map(tr => Array.from(tr.children).map(td => td.textContent.replaceAll(';', ',')));
+        const csv = [header, ...rows].map(r => r.join(';')).join('\n');
+        const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'preisliste.csv'; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Active section highlighting
+    function initObserver() {
+        const links = $$('.nav__link');
+        const map = new Map(links.map(l => [l.getAttribute('href').slice(1), l]));
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const id = entry.target.id;
+                const link = map.get(id);
+                if (!link) return;
+                if (entry.isIntersecting) {
+                    links.forEach(a => a.removeAttribute('aria-current'));
+                    link.setAttribute('aria-current', 'true');
+                }
+            });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: [0, 1] });
+        ['ueber-uns','konzept','leistungen','warum-wir','versprechen','kontakt','preise'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
         });
+    }
+
+    // Back to top visibility
+    function initToTop() {
+        const btn = $('#to-top');
+        window.addEventListener('scroll', () => {
+            const show = window.scrollY > 400;
+            btn.setAttribute('aria-hidden', show ? 'false' : 'true');
+        });
+        btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
+    // Event bindings
+    function bindUI() {
+        $$('#preisliste-modal [data-close-pricelist], #preisliste-backdrop').forEach(el => el.addEventListener('click', closeModal));
+        $$('#preisliste-modal').forEach(el => el.addEventListener('click', (e)=>{ if(e.target.id==='preisliste-modal') closeModal(); }));
+        $$('[data-open-pricelist]').forEach(el => el.addEventListener('click', openModal));
+        $$('.th-sort').forEach(th => th.addEventListener('click', () => toggleSort(th.dataset.sort)));
+        $('#export-csv').addEventListener('click', exportCSV);
+
+        $('#year').textContent = new Date().getFullYear();
+
+        const onSearch = debounce(e => { state.search = e.target.value.trim().toLowerCase(); renderTable(); });
+        const onCat = debounce(e => { state.category = e.target.value; renderTable(); });
+        $('#search').addEventListener('input', onSearch);
+        $('#category').addEventListener('change', onCat);
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+        initCategories();
+        renderTable();
+        bindUI();
+        initObserver();
+        initToTop();
+        document.documentElement.style.scrollBehavior = 'smooth';
+    });
     </script>
 </body>
 </html>
+
+

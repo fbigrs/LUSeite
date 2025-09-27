@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Euter & Söhne - Ihr Lohnunternehmen</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 0 0 20px 20px;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .service-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .service-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .service-card .price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        
+        .order-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            border: 2px solid #4CAF50;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #FF6B6B 0%, #ee5a52 100%);
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+        
+        .testimonial {
+            background: #fff3e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-style: italic;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .contact-card {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🐄 Euter & Söhne 🐄</h1>
+            <p>Ihr verlässlicher Partner für Lohnarbeiten</p>
+            <p><em>"Wo Milch & Tradition auf moderne Technik treffen"</em></p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <h2>🌟 Unser Konzept: Lohndienstleistungen zum Freundschaftspreis</h2>
+            
+            <div class="info-box">
+                <strong>💡 Unsere Philosophie:</strong> Als Milchviehbetrieb kennen wir die Herausforderungen kleiner und mittlerer Höfe. Deshalb bieten wir Lohnarbeiten zu Preisen an, die sich wirklich lohnen - für beide Seiten!
+            </div>
+
+            <h3>🚜 Unsere Leistungen</h3>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>🌾 Dresch & Erntearbeiten</h3>
+                    <p>Gras Silage, Mais Silage, Getreide - wir ernten mit modernem Equipment</p>
+                    <div class="price">ab 2.000 €/ha</div>
+                </div>
+                
+                <div class="service-card">
+                    <h3>🥕 Bodenbearbeitung</h3>
+                    <p>Pflügen, Grubbern, Säen - alles aus einer Hand</p>
+                    <div class="price">ab 1.500 €/ha</div>
+                </div>
+                
+                <div class="service-card">
+                    <h3>🧪 TMR-Mischung</h3>
+                    <p>Individuelle Rationen für Ihre Milchkühe</p>
+                    <div class="price">375 €/Tonne</div>
+                </div>
+                
+                <div class="service-card">
+                    <h3>🚛 Transportdienste</h3>
+                    <p>Produkte, Maschinen, Material - wir bringen's</p>
+                    <div class="price">25,00 €/km</div>
+                </div>
+
+                <div class="service-card">
+                    <h3>🍼 Molkereiprodukte</h3>
+                    <p>Käse, Milch, Schokolade, Butter - wir produzieren alles selbst</p>
+                    <div class="price">preis auf Anfrage</div>
+                </div><br>
+
+            <h3>🚜 Unsere Molkerei</h3>
+                
+                <div class="service-card">
+                    <h3>🍼 Molkereiprodukte</h3>
+                    <p>Käse, Milch, Schokolade, Butter - wir produzieren alles selbst</p>
+                    <div class="price">preis auf Anfrage</div>
+                </div>
+            </div>
+
+            <h3>🏆 Warum Euter & Söhne?</h3>
+            <div class="testimonial">
+                <p>"Als Milchviehbetrieb wissen wir genau, was wichtig ist: Pünktlichkeit, Sauberkeit und faire Preise. Unsere Molkerei garantiert beste Qualität - und das spürt man in jedem Liter Milch!"</p>
+                <strong>- Klaus Euter, Senior-Chef</strong>
+            </div>
+
+            <div class="info-box">
+                <strong>✅ Unsere Versprechen:</strong>
+                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                    <li>Keine versteckten Kosten - transparente Preisgestaltung</li>
+                    <li>Flexible Terminvereinbarung (auch kurzfristig möglich)</li>
+                    <li>Regionale Preise nach realem Niveau</li>
+                    <li>Regionaler Einsatz (keine riesigen Fahrten)</li>
+                    <li>Persönliche Betreuung durch die Euter-Familie</li>
+                </ul>
+            </div>
+
+            <h3>📞 Kontaktieren sie uns!</h3>
+
+            <div class="contact-info">
+                <div class="contact-card">
+                    <h4>📍 Standort</h4>
+                    <p>FS25 Server<br>
+                    Milchviehhof "Euter & Söhne"<br>
+                    Koordinaten: 125, 87</p>
+                </div>
+                
+                <div class="contact-card">
+                    <h4>⏰ Erreichbarkeit</h4>
+                    <p>Daily: Rund um die Uhr<br>
+                    Discord: Euter und Söhne Bereich</p>
+                </div>
+                
+                <div class="contact-card">
+                    <h4>💰 Zahlung</h4>
+                    <p>Barzahlung vor Ort<br>
+                    Überweisung möglich<br>
+                    Freundschaftspreise</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Formular-Handling
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const orderData = {};
+            
+            for (let [key, value] of formData.entries()) {
+                orderData[key] = value;
+            }
+            
+            // Hier könntest du die Daten an einen Server senden
+            alert(`✅ Vielen Dank für Ihren Auftrag!\n\nWir werden uns schnellstmöglich bei Ihnen melden.\n\nAuftragsdaten:\nBetrieb: ${orderData.name}\nLeistung: ${orderData.service}\nFläche: ${orderData.area} ha\nTermin: ${orderData.date}`);
+            
+            // Optional: Formular zurücksetzen
+            // this.reset();
+        });
+
+        // PDF-Generierung
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Formulardaten abrufen
+            const formData = new FormData(document.getElementById('orderForm'));
+            const orderData = {};
+            for (let [key, value] of formData.entries()) {
+                orderData[key] = value;
+            }
+            
+            // PDF-Inhalt
+            doc.setFontSize(20);
+            doc.text('Euter & Söhne - Lohnunternehmen', 20, 30);
+            
+            doc.setFontSize(16);
+            doc.text('Auftragsbestätigung', 20, 45);
+            
+            doc.setFontSize(12);
+            let yPosition = 60;
+            
+            doc.text(`Betrieb: ${orderData.name || 'nicht angegeben'}`, 20, yPosition);
+            yPosition += 15;
+            doc.text(`Kontakt: ${orderData.contact || 'nicht angegeben'}`, 20, yPosition);
+            yPosition += 15;
+            doc.text(`Leistung: ${orderData.service || 'nicht angegeben'}`, 20, yPosition);
+            yPosition += 15;
+            doc.text(`Fläche/Menge: ${orderData.area || 'nicht angegeben'}`, 20, yPosition);
+            yPosition += 15;
+            doc.text(`Termin: ${orderData.date || 'nicht angegeben'}`, 20, yPosition);
+            yPosition += 15;
+            doc.text(`Hinweise: ${orderData.notes || 'keine'}`, 20, yPosition);
+            
+            yPosition += 30;
+            doc.text('Preis wird nach Prüfung vor Ort festgelegt.', 20, yPosition);
+            yPosition += 15;
+            doc.text('Bei Fragen: Discord - EuterSohn#1234', 20, yPosition);
+            
+            // PDF speichern
+            doc.save(`Auftrag_Euter_Soehne_${orderData.name || 'unbekannt'}.pdf`);
+            
+            alert('📄 PDF wurde erfolgreich generiert und heruntergeladen!');
+        }
+
+        // Service-Preise aktualisieren bei Auswahl
+        document.getElementById('service').addEventListener('change', function() {
+            const service = this.value;
+            const areaInput = document.getElementById('area');
+            
+            // Optional: Platzhalter für Fläche anpassen
+            switch(service) {
+                case 'tmr':
+                    areaInput.placeholder = 'Tonnen';
+                    break;
+                case 'transport':
+                    areaInput.placeholder = 'km';
+                    break;
+                default:
+                    areaInput.placeholder = 'Hektar';
+            }
+        });
+    </script>
+</body>
+</html>
